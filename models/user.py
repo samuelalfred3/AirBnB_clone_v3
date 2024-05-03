@@ -1,9 +1,8 @@
 #!/usr/bin/python3
 """ holds class User"""
-import models
 from models.base_model import BaseModel, Base
-from os import getenv
-import sqlalchemy
+import hashlib
+import models
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
@@ -26,4 +25,12 @@ class User(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
+        if kwargs.get("password", None):
+            kwargs["password"] = self.hash_password(kwargs["password"])
         super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def hash_password(password):
+        """Hash the password to an MD5 value."""
+        return hashlib.md5(password.encode()).hexdigest()
+

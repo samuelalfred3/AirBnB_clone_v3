@@ -2,7 +2,7 @@
 """
 Contains class BaseModel
 """
-
+import hashlib
 from datetime import datetime
 import models
 from os import getenv
@@ -68,8 +68,11 @@ class BaseModel:
         new_dict["__class__"] = self.__class__.__name__
         if "_sa_instance_state" in new_dict:
             del new_dict["_sa_instance_state"]
+        if "password" in new_dict and not models.storage.is_instance_saved(self):
+            del new_dict["password"]  # Remove password key except for FileStorage
         return new_dict
 
     def delete(self):
         """delete the current instance from the storage"""
         models.storage.delete(self)
+
